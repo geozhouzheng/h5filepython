@@ -113,18 +113,3 @@ for i in os.listdir(filePath):
     # jpg format couldn't be applied here
     
 print ('finish drawing')
-
-
-                
-        
-    
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
