@@ -1,10 +1,11 @@
 ###############################################################################
-# h5test.py is created for rebuild model simulation test                      #
+# msys.py is created for rebuild model simulation test of Mechsys             #
 # In dynamic simulation, especially for shaking table tests simulation, the   # 
 # result should be redrew via relative position between SPH particles and DEM #
 # particles.                                                                  #
 # Created by Zheng Zhou 'zhougeohhu@foxmail.com' April 2021                   #
 # Please follow the explanation and edit it for your simulation result        #
+# Under editing                                                               #
 ###############################################################################
 
 import numpy as np
@@ -12,24 +13,18 @@ import h5py
 import os
 import shutil
 import matplotlib.pyplot as plt
+
 # Python libraries above should be checked bedore your beginning
 # Python 3.X is suggested
 # If you use Spyder, you could have an interface similar to MatLAB
 
 ############################## files operation ################################
 os.mkdir('/root/msys_sandbox/BM/')
-os.mkdir('/root/msys_sandbox/BM/pics/')
-os.mkdir('/root/msys_sandbox/BM/video/')
+os.mkdir('/root/msys_sandbox/BM/Deformation/')
+os.mkdir('/root/msys_sandbox/BM/Deformation/pics/')
+os.mkdir('/root/msys_sandbox/BM/Deformation/video/')
 # Attention please, the new folder should be created in the fold including 
-# result files and this py.file
-
-def create_text(filename):
-    path        = '/root/msys_sandbox/BM/'
-    file_path   = path + filename +'.txt'
-    file        = open(file_path,'w')
-    file.close
-# A function for rewriting the position data in txt.file 
-        
+# result files and this py.file      
 
 filePath = '/root/msys_sandbox/'
 # Edit this variable definiation with aforementioned definition
@@ -46,19 +41,32 @@ for i in os.listdir(filePath):
 # copy h5.file to new folder for next step
                 
 fin = h5py.File('/root/msys_sandbox/Bigmodel2_Initial.h5',mode = 'r')
-# read the initial model, and record some information 
+# print(fin.keys())
+# read the initial model, and record some information
+iniSPHposition = fin.get('Position')
+dsp            = len(iniSPHposition)
+rowdp          = int(dsp/3)
+iniSPHposition = np.array(iniSPHposition).reshape(rowdp,3)
+spxin          = np.min(iniSPHposition[:,0])
+spxinmax       = np.max(iniSPHposition[:,0])
+spyin          = np.min(iniSPHposition[:,1])
+spyinmax       = np.max(iniSPHposition[:,1])
 iniDEMposition = fin.get('DEMPosition')  
 dp             = len(iniDEMposition)
 rowdp          = int(dp/3)
 iniDEMposition = np.array(iniDEMposition).reshape(rowdp,3)
 dexin          = np.min(iniDEMposition[:,0])
+dexinmax       = np.max(iniDEMposition[:,0])
 deyin          = np.min(iniDEMposition[:,1])
+deyinmax       = np.max(iniDEMposition[:,1])
 dezin          = np.min(iniDEMposition[:,2])
+
+fnn = (deyinmax-deyin)/(dexinmax-dexin)
 
 print ('finish file operation')
 
 
-############################### redraw results ################################
+########################## redraw deformatin results ##########################
 filePath    = '/root/msys_sandbox/BM/'
 for i in os.listdir(filePath):
     f           = h5py.File(i,mode='r')
@@ -72,9 +80,9 @@ for i in os.listdir(filePath):
     dp          = len(DEMposition)
     rowdp       = int(dp/3)
     DEMposition = np.array(DEMposition).reshape(rowdp,3)
-    dexm        = np.min(DEMposition[:,0])
-    deym        = np.min(DEMposition[:,1])
-    dezm        = np.min(DEMposition[:,2])
+    dexm        = DEMposition[1,0]
+    deym        = DEMposition[0,1]
+    dezm        = 0
     # read, reshape and save DEM particles position data
     
     deltm       = np.ones((rowsp,3))
@@ -92,16 +100,16 @@ for i in os.listdir(filePath):
     filename = i.rstrip('h5')
     filename = filename.rstrip('.')
     name = filename+'.txt'
-    np.savetxt(filePath+name,AA)
+    np.savetxt(filePath+'Deformation/'+name,AA)
     # name and save txt.files in the folder
 
-    picPath = '/root/msys_sandbox/BM/pics/'
+    picPath = '/root/msys_sandbox/BM/Deformation/pics/'
     plt.subplots(constrained_layout=True);
     x = AA[:,0];
     y = AA[:,1];
-    plt.figure(figsize=(7,3.5),dpi=100); 
+    plt.figure(figsize=(7,7*fnn),dpi=300); 
     # plot setting, unit inch
-    plt.axis([-0.05,2.10,-0.05,1.05]);
+    plt.axis([0,dexinmax-dexin,0,deyinmax-dexin]);
     # axia setting
     plt.xlabel('Distance');
     plt.ylabel('Elevation');
@@ -113,3 +121,10 @@ for i in os.listdir(filePath):
     # jpg format couldn't be applied here
     
 print ('finish drawing')
+
+############################ redraw strain results ############################
+
+
+
+
+
