@@ -1,20 +1,18 @@
 ###############################################################################
-# animation.py is created for creating an animation for dynamic simulation    #
+# deforanimation.py is created for creating an animation for dynamic simulation    #
 # h5test.py should be run at first.                                           #
 # Created by Zheng Zhou 'zhougeohhu@foxmail.com'                              #
 # Please follow the explanation and edit it for your simulation result        #
 ###############################################################################
 
-import os
+import os,re,random
 import cv2
-import re
 # Python libraries above should be checked bedore your beginning
 # Python 3.X is suggested
 # If you use Spyder, you could have an interface similar to MatLAB
- 
-picPath = '/root/msys_sandbox/BM/pics/'
-############################ animation generating #############################
 
+########################### deformation animation #############################
+picPath = '/root/msys_sandbox/BM/Deformation/pics/'
 def get_images(path):
     file_list = []
     for root,dirs,files in os.walk(path):
@@ -36,11 +34,20 @@ path        =   picPath
 file_list   =   get_images(path)
 file_list.sort(key=key_sort)
 # video basic setting
-fps             =   25
-img_size        =   (700,350)
+fps             =   24
+
+_files = os.listdir(path)
+number = random.randint(1, len(_files))
+
+for number in file_list:
+    simg = cv2.imread(number)
+    sp = simg.shape
+    # shape [height, width, color]
+img_size        =   (sp[1],sp[0])
+# be careful, (width, height)
 # folder and name for video
-save_path       =   '/root/msys_sandbox/BM/video/test.mp4'
-fourcc          =   cv2.VideoWriter_fourcc('M','P','N','G')
+save_path       =   '/root/msys_sandbox/BM/Deformation/video/test.mp4'
+fourcc          =   cv2.VideoWriter_fourcc('M','J','P','G')
 video_writer    =   cv2.VideoWriter(save_path,fourcc,fps,img_size)
 for file_name in file_list:
     print (file_name)
