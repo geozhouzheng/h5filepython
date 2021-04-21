@@ -1,5 +1,5 @@
 ###############################################################################
-# deforanimation.py is created for creating an animation for dynamic simulation    #
+# deforanimation.py is created for making an animation for dynamic simulation #
 # h5test.py should be run at first.                                           #
 # Created by Zheng Zhou 'zhougeohhu@foxmail.com'                              #
 # Please follow the explanation and edit it for your simulation result        #
