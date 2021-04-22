@@ -7,4 +7,8 @@ import h5py
 f = h5py.File('filename', mode = 'r')
 # read h5 file
 print(f.key())
-# output the label of h5 file
+# output the labels of h5 file
+
+ns = f.get('Sigma')
+# write data from label 'Sigma' in ns
+
